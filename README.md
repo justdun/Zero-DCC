@@ -19,3 +19,6 @@ This project includes:
 * Parts list (to come)
 * Wiring diagram (to come)
 * Arduino INO file (to come)
+
+
+Special thanks to the team developing the DCC-EX platform without which this project would not be possible!
