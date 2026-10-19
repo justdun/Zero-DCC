@@ -1,4 +1,4 @@
-ZeroDCC - Parts List
+<H1>ZeroDCC - Parts List</H1>
 
 
 1.   Arduino Mega (eg: https://www.jaycar.com.au/duinotech-mega-2560-r3-main-board/p/XC4420) 
