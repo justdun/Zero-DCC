@@ -1,6 +1,6 @@
 # Zero-DCC
 
-(C) Justin M Dunlop 2020, 2026
+(C) Justin M Dunlop (Zero1Guy) 2020, 2026
 
 This project allows you to use your Hornby Zero 1 train control system from 1979 as a throttle for the DCC-EX platform.
 
@@ -20,5 +20,6 @@ This project includes:
 * Wiring diagram (to come)
 * Arduino INO file (to come)
 
+For video demonstrations please visit:  https://www.youtube.com/@zero1guy
 
 Special thanks to the team developing the DCC-EX platform without which this project would not be possible!
