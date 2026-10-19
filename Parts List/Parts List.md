@@ -42,6 +42,6 @@ Here is the parts list for my build.  I have included some more expensive source
 
 <h2>Optional:</h2>
 
-7.    Buck convertor (eg: https://www.aliexpress.com/item/1005012618202087.html
+7.    Buck convertor (eg: https://www.aliexpress.com/item/1005012618202087.html)
 	
       	I used this to convert the incoming 15-18V DC required for the DCC-EX motor shield to allow for a 5V DC feed to power the Arduino and components.  This results in one power source for the entire system.
