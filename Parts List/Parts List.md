@@ -1,1 +1,41 @@
+ZeroDCC - Parts List
 
+
+1.   Arduino Mega (eg: https://www.jaycar.com.au/duinotech-mega-2560-r3-main-board/p/XC4420) 
+
+	      This is the main unit for the ZeroDCC code and display.
+
+
+2.   4” TFT screen sheild for Arduino Mega with SD Card Reader (eg: https://www.aliexpress.com/item/1005004542426818.html )
+
+	      This is to display the current ZeroDCC configuration.
+
+
+3.    DCC Sniffer (eg: https://forum.mrhmag.com/post/sma37-simple-dcc-connections-for-wide-decoder-adaptation-12217074)
+
+	      I used Geoff Bunza’s PCB. Interestingly, this simple DCC sniffer can also sniff the Zero 1 signal.
+
+
+4.    Relay module, 2 channel relay 5V (eg: https://www.aliexpress.com/item/1005002617199944.html)
+
+	      If you are still using a MicroMimic and/or Zero 1 accessory modules (which you certainly can), these relays are used to disconnect the Zero 1 feed to those circuits when Zero 1 Functions 90-99 are being accessed by the ZeroDCC code.  Without this, your genuine Zero 1 accessories and MicroMimic will falsely change in response to ZeroDCC relayed keyboard strokes.
+
+
+5.    DCC-EX system
+
+	      I used an Arduino Mega with WiFi and a genuine Arduino MotorSheild (see DCC-EX pages for details https://dcc-ex.com/) 
+
+        (eg: https://www.jaycar.com.au/duinotech-mega-2560-r3-main-board-with-wi-fi/p/XC4421  and https://www.jaycar.com.au/arduino-motor-shield-rev3/p/XC9207)
+
+
+6.    Cables and connectors
+
+        In the main, I used Dupont single wire connectors.
+        The biggest problem was making a cable to separate the TFT shield from the Mega and hang it over the Zero 1 locomotive list. I couldn't find any existing cables for this, so I made a custom ribbon cable.
+
+
+Optional:
+
+7.    Buck convertor (eg: https://www.aliexpress.com/item/1005012618202087.html
+	
+      	I used this to convert the incoming 15-18V DC required for the DCC-EX motor shield to allow for a 5V DC feed to power the Arduino and components.  This results in one power source for the entire system.
