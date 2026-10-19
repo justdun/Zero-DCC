@@ -14,9 +14,9 @@ This project includes:
 
 * Complete application manual
 * STL files for all components
-* Decal masters for
+* Decal masters for case
 * Files required as contents for the on-board SD Card
-* <a href "https://github.com/justdun/Zero-DCC/blob/main/Parts%20List/Parts%20List.md">Parts List</a>
+* [Parts List](https://github.com/justdun/Zero-DCC/blob/main/Parts%20List/Parts%20List.md)
 * Wiring diagram (to come)
 * Arduino INO file (to come)
 
