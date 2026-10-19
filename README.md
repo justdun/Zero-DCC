@@ -2,9 +2,9 @@
 
 (C) Justin M Dunlop (Zero1Guy) 2020, 2026
 
-This project allows you to use your Hornby Zero 1 train control system from 1979 as a throttle for the DCC-EX platform.
+This project allows you to use your Hornby Zero 1 train control system from 1979 as a throttle for the DCC-EX platform.  It does not require any modifications to the Zero 1 control hardware.  You will need to remove any Zero 1 locomotive modules and fit DCC locomotive modules of your choosing.
 
-The Zero DCC module provides a significant upgrade to Zero 1 users. To use this interface effectively, you must have a Zero 1 Master Controller and DCC equipped and programmed locomotives and points/turnouts.
+The Zero DCC module provides a significant upgrade to Zero 1 users. To use this interface effectively, you must have a Zero 1 Master Controller and DCC equipped and programmed locomotives and optionally points/turnouts.  You can continue to use your Zero 1 accessory modules and MicroMimic console if desired.
 
 The interface not only provides an upgrade allowing the use of your existing Hornby Zero 1 functions to command a modern DCC system, but it also provides additional DCC functions, not previously available using Hornby Zero 1.  For example control of DCC lights and sounds on an appropriately equipped locomotive.
 
