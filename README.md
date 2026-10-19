@@ -12,13 +12,13 @@ Warning:  Locomotives equipped with Hornby Zero 1 Locomotive Modules will likely
 
 This project includes:
 
-* Complete application manual
-* STL files for all components
-* Decal masters for case
-* Files required as contents for the on-board SD Card
+* [Complete application manual](https://github.com/justdun/Zero-DCC/tree/main/Manual)
+* [STL files for all components](https://github.com/justdun/Zero-DCC/tree/main/Case%20STL%20Files)
+* [Decal masters for case](https://github.com/justdun/Zero-DCC/tree/main/Case%20Decal)
+* [Files required as contents for the on-board SD Card]
 * [Parts List](https://github.com/justdun/Zero-DCC/blob/main/Parts%20List/Parts%20List.md)
 * Wiring diagram (to come)
-* Arduino INO file (to come)
+* [Arduino INO file](https://github.com/justdun/Zero-DCC/tree/main/ZeroDCC%20code%20for%20Arduino%20Mega%20with%20WiFi)
 
 For video demonstrations please visit:  https://www.youtube.com/@zero1guy
 
