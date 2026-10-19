@@ -50,5 +50,5 @@ Here is the parts list for my build.  I have included some more expensive source
 
 8.    Buck convertor (eg: https://www.aliexpress.com/item/1005012618202087.html)
 	
-      	I used this to convert the incoming 15-18V DC required for the DCC-EX motor shield to allow for a 5V DC feed to power the Arduino and components.  This results in one power source for the entire system.
+      	I used this to convert the incoming 12-24V DC required for the DCC-EX motor shield to allow for a 5V DC feed to power the Arduino and components.  This results in one power source for the entire system.
   		BEWARE:  You will need to use a multimeter and adjust the buck converter when in place to ensure only 5V DC in being supplied BEFORE attaching to the Arduino units (or risk damaging them).
