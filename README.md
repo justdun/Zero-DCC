@@ -16,7 +16,7 @@ This project includes:
 * STL files for all components
 * Decal masters for
 * Files required as contents for the on-board SD Card
-* Parts list (to come)
+* <a href "https://github.com/justdun/Zero-DCC/blob/main/Parts%20List/Parts%20List.md">Parts List</a>
 * Wiring diagram (to come)
 * Arduino INO file (to come)
 
