@@ -34,14 +34,21 @@ Here is the parts list for my build.  I have included some more expensive source
            https://www.jaycar.com.au/arduino-motor-shield-rev3/p/XC9207)
 
 
+6. 	DCC-EX power supply (12-24V DC 5Amp)
+
+   This is to provide power to your DCC system. The motor shield on the DCC-EX system will regulate the voltage for the track.  I used an old electronics power supply.  Using an optional buck converter (below) you can also use this supply to power the Arduino's.
+
 7.    Cables and connectors
 
       In the main, I used Dupont single wire connectors.
       The biggest problem was making a cable to separate the TFT shield from the Mega and hang it over the Zero 1 locomotive list. I couldn't find any existing cables for this, so I made a custom ribbon cable.
 
+  
+
 
 <h2>Optional:</h2>
 
-7.    Buck convertor (eg: https://www.aliexpress.com/item/1005012618202087.html)
+8.    Buck convertor (eg: https://www.aliexpress.com/item/1005012618202087.html)
 	
       	I used this to convert the incoming 15-18V DC required for the DCC-EX motor shield to allow for a 5V DC feed to power the Arduino and components.  This results in one power source for the entire system.
+  		BEWARE:  You will need to use a multimeter and adjust the buck converter when in place to ensure only 5V DC in being supplied BEFORE attaching to the Arduino units (or risk damaging them).
