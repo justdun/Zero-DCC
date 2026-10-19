@@ -25,10 +25,11 @@
 
 	  I used an Arduino Mega with WiFi and a genuine Arduino MotorSheild (see DCC-EX pages for details https://dcc-ex.com/) 
 
-      (eg: https://www.jaycar.com.au/duinotech-mega-2560-r3-main-board-with-wi-fi/p/XC4421  and https://www.jaycar.com.au/arduino-motor-shield-rev3/p/XC9207)
+      (eg: https://www.jaycar.com.au/duinotech-mega-2560-r3-main-board-with-wi-fi/p/XC4421 ; and
+           https://www.jaycar.com.au/arduino-motor-shield-rev3/p/XC9207)
 
 
-6.    Cables and connectors
+7.    Cables and connectors
 
       In the main, I used Dupont single wire connectors.
       The biggest problem was making a cable to separate the TFT shield from the Mega and hang it over the Zero 1 locomotive list. I couldn't find any existing cables for this, so I made a custom ribbon cable.
