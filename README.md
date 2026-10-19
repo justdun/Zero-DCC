@@ -16,7 +16,7 @@ This project includes:
 * [STL files for all components](https://github.com/justdun/Zero-DCC/tree/main/Case%20STL%20Files)
 * [Decal masters for case](https://github.com/justdun/Zero-DCC/tree/main/Case%20Decal)
 * [Files required as contents for the on-board SD Card]
-* [Parts List](https://github.com/justdun/Zero-DCC/blob/main/Parts%20List/Parts%20List.md)
+* [Parts List](https://github.com/justdun/Zero-DCC/tree/main/Parts%20List)
 * Wiring diagram (to come)
 * [Arduino INO file](https://github.com/justdun/Zero-DCC/tree/main/ZeroDCC%20code%20for%20Arduino%20Mega%20with%20WiFi)
 
