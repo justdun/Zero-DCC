@@ -1,6 +1,11 @@
 <H1>ZeroDCC - Parts List</H1>
 
 
+Here is the parts list for my build.  I have included some more expensive sources for some important items, which are of high quality and are known to work.  There are cheaper options available for most items listed, but do your research and be prepared that some of the every cheap options may not work (the DCC-EX team have documented this as part of their project).
+
+<h2>The List:</h2>
+
+
 1.   Arduino Mega (eg: https://www.jaycar.com.au/duinotech-mega-2560-r3-main-board/p/XC4420) 
 
 	 This is the main unit for the ZeroDCC code and display.
