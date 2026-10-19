@@ -36,7 +36,7 @@ Here is the parts list for my build.  I have included some more expensive source
 
 6. 	DCC-EX power supply (12-24V DC 5Amp)
 
-   This is to provide power to your DCC system. The motor shield on the DCC-EX system will regulate the voltage for the track.  I used an old electronics power supply.  Using an optional buck converter (below) you can also use this supply to power the Arduino's.
+  	 This is to provide power to your DCC system. The motor shield on the DCC-EX system will regulate the voltage for the track.  I used an old electronics power supply.  Using an optional buck converter (below) you can also use this supply to power the Arduino's.
 
 7.    Cables and connectors
 
