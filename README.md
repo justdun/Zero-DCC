@@ -30,3 +30,9 @@ Thanks also to Geoff Bunza for his simple DCC sniffer circuit and PCB design.
 
 ![ZeroDCC Module Front](/Photos/ZeroDCC_front.jpg)
 ![ZeroDCC Module Back](/Photos/ZeroDCC_back.jpg)
+
+Change notes:
+
+Release Candidate 1.1
+  - code improvement to catch potential corruption to incoming Zero 1 data
+  - some arrays reduced in size to meet operational requirement and minimise memory use
