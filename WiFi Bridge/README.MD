@@ -5,7 +5,6 @@ On an Arduino Mega/ESP8266 WiFi combo board, the ESP8266 is a separate chip with
 
 The board has an 8-way DIP switch that decides what’s connected to what. The usual combo board (the RobotDyn style) works like this, but check the table printed on your board or its listing:
 
-|--------------------------------------------------------------|------------|
 |What you’re doing                                             |Switches ON |
 |--------------------------------------------------------------|------------|
 |Upload a sketch to the ESP8266	                               | 5, 6, 7    |
@@ -13,7 +12,6 @@ The board has an 8-way DIP switch that decides what’s connected to what. The u
 |Upload a sketch to the Mega	                                 | 3, 4       |
 |Normal running: Mega ↔ ESP, with USB to the Mega for debug	   | 1, 2, 3, 4 |
 |Mega ↔ ESP only	                                             | 1, 2       |
-|--------------------------------------------------------------|------------|
 
 There’s often also a small slide switch that picks which Mega serial port connects to the ESP. Set it to RXD3/TXD3.
 
