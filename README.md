@@ -36,3 +36,20 @@ Change notes:
 Release Candidate 1.1
   - code improvement to catch potential corruption to incoming Zero 1 data
   - some arrays reduced in size to meet operational requirement and minimise memory use
+    
+Release Candidate 1.2
+  - now broadcasts DCC-EX commands on Serial 0,1,2 & 3 to allow for wired connections plus serial out to WiFi on combo boards.
+
+Release Candidate 2.0
+  - screen update:
+    - splash and loco screens are drawn in code (ZeroSplash.h, ZeroPanel.h) - no BMP files needed on the SD card
+    - loading status (settings, other settings banks, MicroMimic map file, recordings) shown
+      under the logo on the splash screen and on the serial monitor
+  - track map screen: Accessory 93 ON shows the layout from the SD card file Z_DCCMAP.TXT (see Manual v8 for details),
+    Accessory 93 OFF returns to the loco screen. 
+    If Z_DCCMAP.TXT is missing or has an error at start-up, Accessory 93 is ignored.
+  - change to some of the Accessory 95 recording function logic (see Manual v8 for details)
+  - Zero 1 / MicroMimic feed (relay) is off at start-up and goes on and off with DCC track power.
+    In Accessory 90, choosing 1 (ON) shows TRACK POWER ON on black; DCC power and the Zero 1
+    feed are only turned on when Acc 90 is closed with 90<- (the status line then turns red).
+    Closing Acc 90 without choosing ON leaves the power as it was (see Manual v8 for details)
