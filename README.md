@@ -26,7 +26,7 @@ For video demonstrations please visit:  https://www.youtube.com/@zero1guy
 
 Special thanks to the team developing the DCC-EX platform without which this project would not be possible.
 
-Thanks also to Geoff Bunza for his simple DCC sniffer circuit and PCB design.
+Thanks also to Geoff Bunza for his excellent, simple DCC sniffer circuit and PCB design.
 
 ![ZeroDCC Module Front](/Photos/ZeroDCC_front.jpg)
 ![ZeroDCC Module Back](/Photos/ZeroDCC_back.jpg)
