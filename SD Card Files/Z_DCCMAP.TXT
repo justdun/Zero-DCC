@@ -1,0 +1,12 @@
+; Z_DCCMAP.TXT - example layout for ZeroDCC (15 codes per row, 9 rows)
+; Oval with a passing loop (points 1 and 2), a siding off the top (point 5)
+; a spur off the right-hand side (point 3) and signals 10, 11 and 12.
+. . . . . BR H H H H . . . . .
+. BR H H H HLT5 H H H HS10 H H H LB .
+. VS11A . . . . . . . . . . . V .
+. V . . . . . . . . . . . VBR3 H
+. V . . . . . . . . . . . V .
+. V . . . . . . . . . . . V .
+. TR H HLB1 H H H H H H HBR2A H H TLS12 .
+. . . TR H H H H H H TL . . . .
+BLANK
