@@ -1,11 +1,11 @@
 # Notes on how to set up an Arduino Mega / ESP8266 Combo board for WiFi connection to DCC-EX
 
-##Please note that this is completely untested! Offers to test are welcome!!
+## Please note that this is completely untested! Offers to test are welcome!!
 
 On an Arduino Mega/ESP8266 WiFi combo board, the ESP8266 is a separate chip with its own program. You flash a small “bridge” sketch onto it once. After that the Mega just sends its commands out on Serial3, and the ESP passes them over WiFi to DCC-EX.
 
 
-##Know the DIP switches. 
+## Know the DIP switches. 
 
 The board has an 8-way DIP switch that decides what’s connected to what. The usual combo board (the RobotDyn style) works like this, but check the table printed on your board or its listing:
 
@@ -20,7 +20,7 @@ The board has an 8-way DIP switch that decides what’s connected to what. The u
 There’s often also a small slide switch that picks which Mega serial port connects to the ESP. Set it to RXD3/TXD3.
 
 
-##Edit the settings at the top of the bridge sketch.
+## Edit the settings at the top of the bridge sketch.
 
 If DCC-EX runs its own WiFi access point: the network name looks like DCCEX_ followed by six characters, and the password is PASS_ followed by the same six characters. DCC-EX prints both on its serial monitor at startup. Its address is normally 192.168.4.1, which is already filled in.
 
@@ -29,7 +29,7 @@ If DCC-EX joins your home network: use your home WiFi details instead, and give 
 Baud rate: the sketch is set to 115200. That has to match the Mega side.
 
 
-##Flash the bridge onto the ESP.
+## Flash the bridge onto the ESP.
 
 Install the ESP8266 board package in the Arduino IDE.
 
@@ -40,7 +40,7 @@ Set the DIP switches to 5, 6, 7 ON and upload.
 Some boards also need the reset button pressed when the upload starts.
 
 
-##What the bridge does.
+## What the bridge does.
 
 It joins the WiFi and connects to DCC-EX on port 2560.
 
@@ -53,6 +53,6 @@ While there’s no connection it throws incoming data away, so nothing old gets 
 The ESP’s blue LED is on while it’s connected to DCC-EX.
 
 
-##Change DIP switches for operations:
+## Change DIP switches for operations:
 
 Set the DIP switches to 1, 2, 3, 4 ON for normal running.
