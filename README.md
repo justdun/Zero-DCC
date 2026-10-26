@@ -53,3 +53,6 @@ Release Candidate 2.0
     In Accessory 90, choosing 1 (ON) shows TRACK POWER ON on black; DCC power and the Zero 1
     feed are only turned on when Acc 90 is closed with 90<- (the status line then turns red).
     Closing Acc 90 without choosing ON leaves the power as it was (see Manual v8 for details)
+
+Release Candidate 2.1
+  - WiFi status added. Where a Combination Arduino Mega / ESP8266 WiFi board is being used for the ZeroDCC host, connection status will be displayed, see [WiFi Bridge](https://github.com/justdun/Zero-DCC/tree/main/WiFi%20Bridge).
