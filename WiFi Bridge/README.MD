@@ -66,6 +66,7 @@ ZeroDCC RC2.1 now displays WiFi connection status as a coloured dot on the left 
 Dot Legend:
 
 | Dot Colour | Meaning |
+|------------|---------|
 | White | Looking for WiFi|
 | Yellow | No DCC-EX |
 | Green | Connected (blinking=active) |
