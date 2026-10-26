@@ -1,6 +1,6 @@
 # Notes on how to set up an Arduino Mega / ESP8266 Combo board for WiFi connection to DCC-EX
 
-## Please note that this is completely untested! Offers to test are welcome!!
+## Now tested and working!
 
 On an Arduino Mega/ESP8266 WiFi combo board, the ESP8266 is a separate chip with its own program. You flash a small “bridge” sketch onto it once. After that the Mega just sends its commands out on Serial3, and the ESP passes them over WiFi to DCC-EX.
 
@@ -33,11 +33,18 @@ Baud rate: the sketch is set to 115200. That has to match the Mega side.
 
 Install the ESP8266 board package in the Arduino IDE.
 
-Select “Generic ESP8266 Module”.
+Select “Generic ESP8266 Module”
+
+IMPORTANT: Check under Tools > Crystal Frequency, that it is set to 26 MHz (old versions defaulted to 40 MHz which will not work correctly)
 
 Set the DIP switches to 5, 6, 7 ON and upload.
 
 Some boards also need the reset button pressed when the upload starts.
+
+
+## Change DIP switches for operations:
+
+Set the DIP switches to 1, 2, 3, 4 ON for normal running.
 
 
 ## What the bridge does.
@@ -52,7 +59,19 @@ While there’s no connection it throws incoming data away, so nothing old gets 
 
 The ESP’s blue LED is on while it’s connected to DCC-EX.
 
+## Connection Status with DCC-EX
 
-## Change DIP switches for operations:
+ZeroDCC RC2.1 now displays WiFi connection status as a coloured dot on the left of the Power Status Bar across the top of the screen.
 
-Set the DIP switches to 1, 2, 3, 4 ON for normal running.
+Dot Legend:
+
+| Dot Colour | Meaning |
+| White | Looking for WiFi|
+| Yellow | No DCC-EX |
+| Green | Connected (blinking=active) |
+| Black | Commands (blink) |
+| Grey | Stopped reporting |
+| Magenta | Data received but not from ZeroDCC |
+| No dot | Nothing Received from WiFi module |        
+
+When you are adjusting the Zero 1 controls, you will see the dot blinking Green as each command is sent.
