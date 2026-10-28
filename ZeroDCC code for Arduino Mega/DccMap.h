@@ -3,8 +3,10 @@
 // Loads a 15 x 9 track map from the SD card file Z_DCCMAP.TXT at start-up and draws it in
 // landscape (480 x 320, 32 px squares). Accessory 93 ON shows the map (only if
 // the map file loaded without errors - otherwise Acc 93 is ignored).
-// Accessory 93 OFF returns to the loco screen. Accessories 1-89 update the
-// green/red dots on any point that uses that accessory number.
+// Accessory 93 OFF returns to the loco screen. Points and signals can use any
+// accessory number from 1 to 2040: 1-89 are set straight from the Zero 1,
+// higher numbers through Accessory 92. Each change updates the green/red dots
+// on every point or signal that uses that accessory number.
 //
 // ---------------------------------------------------------------------------
 // Z_DCCMAP.TXT MAP FILE FORMAT (plain text, edit on a PC)
@@ -14,6 +16,7 @@
 //     Missing codes at the end of a row are blank.
 //   - BLANK on its own line leaves that whole row empty.
 //   - Lines starting with ; or # are comments. Upper/lower case doesn't matter.
+//   - Lines can be up to 159 characters long.
 //
 //   Edges of a square:  L = mid-left   R = mid-right
 //                       T = mid-top    B = mid-bottom
@@ -25,7 +28,7 @@
 //                (BR = middle-bottom to mid-right, LB = mid-left to middle-bottom,
 //                 TL = middle-top to mid-left,     TR = mid-right to middle-top)
 //
-//   Points: base line + diagonal + accessory number (1-89) + optional A
+//   Points: base line + diagonal + accessory number (1-2040) + optional A
 //   HLT12   horizontal with diagonal mid-left to mid-top,     accessory 12
 //   HTR12   horizontal with diagonal mid-top to mid-right
 //   HLB12   horizontal with diagonal mid-left to mid-bottom
@@ -34,11 +37,14 @@
 //   VLB12   vertical   with diagonal mid-left to middle-bottom
 //   VTL12   vertical   with diagonal middle-top to mid-left
 //   VTR12   vertical   with diagonal mid-right to middle-top
-//   Add A for the alternative orientation, e.g. HLT12A
+//   Add A for the alternative orientation, e.g. HLT12A, VBR1050A
 //
-//   Signals: any track code + S + accessory number (1-89) + optional A
+//   Signals: any track code + S + accessory number (1-2040) + optional A
 //   HS12  VS12  BRS12  LBS12  TLS12  TRS12   (e.g. TRS7A = TR with signal 7, alternative)
 //   (the two diagonal letters can be in either order: HLT12 = HTL12)
+//
+//   Accessory numbers too wide for the space beside the track are drawn in a
+//   smaller font, on two lines if needed.
 //
 // DOTS ON A POINT
 //   Default:      accessory OFF -> straight route green, diverging red
@@ -57,9 +63,10 @@
 //      Also write  void showMapStatus()  that draws the track mode / power line
 //      at y = MAP_STATUS_Y in landscape. The map calls it after drawing.
 //   3. In setup(), after SD.begin() has succeeded:          dccMapLoad();
-//   4. Where you handle a Zero 1 accessory command, add:
+//   4. Where you handle a Zero 1 accessory command (1-89 and 93), add:
 //          if (dccMapAccessory(tft, acc, on)) return;   // true = Acc 93, nothing else to do
-//      Keep sending accessories 1-89 to DCC++EX as you do now.
+//      For any other point / signal change (Accessory 92, playback), call
+//          dccMapSetPoint(tft, acc, on);                // never treats 93 as the map screen
 //   5. Skip loco screen updates while the map is showing:
 //          if (!dccMapActive()) { ...draw speed / direction... }
 
@@ -70,9 +77,9 @@
 
 // ---------------- Settings ----------------
 #define DCC_MAP_FILE "Z_DCCMAP.TXT"       // SD library needs an 8.3 name (max 8 chars + .TXT)
-const uint8_t MAP_SCREEN_ACC  = 93;       // accessory that switches to the map
-const uint8_t MAP_FIRST_ACC   = 1;
-const uint8_t MAP_LAST_ACC    = 89;
+const uint8_t  MAP_SCREEN_ACC  = 93;      // accessory that switches to the map
+const uint16_t MAP_FIRST_ACC   = 1;
+const uint16_t MAP_LAST_ACC    = 2040;    // highest DCC accessory (linear) address; 2041-2044 are broadcast
 
 const uint8_t MAP_COLS = 15;
 const uint8_t MAP_ROWS = 9;
@@ -98,15 +105,18 @@ const bool     MAP_SHOW_NUMBERS = true;            // accessory number beside ea
 // shape byte: bits 0-1 base line (0 none, 1 H, 2 V)
 //             bits 2-5 diagonal edges (L,R,T,B)
 //             bit 6    alternative orientation
+//             bit 7    signal (single dot) rather than a point
 enum : uint8_t { E_L = 1, E_R = 2, E_T = 4, E_B = 8 };
 enum : uint8_t { BASE_NONE = 0, BASE_H = 1, BASE_V = 2 };
 const uint8_t SHAPE_ALT = 0x40;
-const uint8_t SHAPE_SIG = 0x80;                   // signal (single dot) rather than a point
+const uint8_t SHAPE_SIG = 0x80;
 
-struct MapCell { uint8_t shape; uint8_t acc; };   // acc 0 = not a point
+struct MapCell { uint8_t shape; uint16_t acc; };  // acc 0 = not a point / signal
+
+const uint8_t MAP_CELLS = MAP_ROWS * MAP_COLS;
 
 MapCell  dccMap[MAP_ROWS][MAP_COLS];
-uint8_t  dccAccBits[(MAP_LAST_ACC / 8) + 1];      // last known state of acc 1-89
+uint8_t  dccCellOn[(MAP_CELLS + 7) / 8];          // last known accessory state of each map square
 bool     dccMapLoaded = false;
 bool     dccMapShown  = false;
 char     dccMapError[48] = "";
@@ -116,13 +126,15 @@ void showMapStatus();                             // provided by your sketch: st
 
 inline bool dccMapActive() { return dccMapShown; }
 
-// ---------------- Accessory state ----------------
-inline bool mapAccState(uint8_t acc) {
-  return (dccAccBits[acc >> 3] >> (acc & 7)) & 1;
+// ---------------- Accessory state (per map square) ----------------
+inline bool mapCellOn(uint8_t r, uint8_t c) {
+  uint8_t i = r * MAP_COLS + c;
+  return (dccCellOn[i >> 3] >> (i & 7)) & 1;
 }
-inline void mapSetAccState(uint8_t acc, bool on) {
-  if (on) dccAccBits[acc >> 3] |=  (1 << (acc & 7));
-  else    dccAccBits[acc >> 3] &= ~(1 << (acc & 7));
+inline void mapSetCellOn(uint8_t r, uint8_t c, bool on) {
+  uint8_t i = r * MAP_COLS + c;
+  if (on) dccCellOn[i >> 3] |=  (1 << (i & 7));
+  else    dccCellOn[i >> 3] &= ~(1 << (i & 7));
 }
 
 // ---------------- Parsing ----------------
@@ -142,15 +154,15 @@ static bool mapValidDiagonal(uint8_t m) {
   return (side == E_L || side == E_R) && (vert == E_T || vert == E_B);
 }
 
-// accessory number 1-89 with optional trailing A; p points at the first digit
-static bool mapParseAcc(const char *p, uint8_t &acc, bool &alt) {
-  uint16_t num = 0; uint8_t digits = 0;
-  while (*p >= '0' && *p <= '9' && digits < 3) { num = num * 10 + (*p - '0'); p++; digits++; }
+// accessory number 1-2040 with optional trailing A; p points at the first digit
+static bool mapParseAcc(const char *p, uint16_t &acc, bool &alt) {
+  uint32_t num = 0; uint8_t digits = 0;
+  while (*p >= '0' && *p <= '9' && digits < 6) { num = num * 10 + (*p - '0'); p++; digits++; }
   if (digits == 0 || num < MAP_FIRST_ACC || num > MAP_LAST_ACC) return false;
   alt = false;
   if (*p == 'A') { alt = true; p++; }
   if (*p != '\0') return false;
-  acc = (uint8_t)num;
+  acc = (uint16_t)num;
   return true;
 }
 
@@ -226,6 +238,7 @@ static bool mapParseRow(char *line, uint8_t row, uint16_t lineNo) {
 // If it fails, Accessory 93 is ignored and the loco screen stays up.
 int8_t dccMapLoad() {
   memset(dccMap, 0, sizeof(dccMap));
+  memset(dccCellOn, 0, sizeof(dccCellOn));
   dccMapLoaded = false;
   dccMapError[0] = '\0';
 
@@ -318,7 +331,7 @@ static void mapDrawSignal(Adafruit_GFX &tft, uint8_t r, uint8_t c) {
     mapEdgePoint(x, y, mask & (E_T | E_B), bx, by);
     px = (ax + bx) / 2; py = (ay + by) / 2;
   }
-  bool red = mapAccState(cell.acc);
+  bool red = mapCellOn(r, c);
   if (cell.shape & SHAPE_ALT) red = !red;
   tft.fillCircle(px, py, 4, MAP_RING);
   tft.fillCircle(px, py, 3, red ? MAP_OFF : MAP_ON);
@@ -329,7 +342,7 @@ static void mapDrawDots(Adafruit_GFX &tft, uint8_t r, uint8_t c) {
   if (cell.shape & SHAPE_SIG) { mapDrawSignal(tft, r, c); return; }
   int16_t x = c * MAP_CELL, y = MAP_TOP + r * MAP_CELL, sx, sy, dx, dy;
   mapDotPositions(x, y, cell.shape, sx, sy, dx, dy);
-  bool diverging = mapAccState(cell.acc);
+  bool diverging = mapCellOn(r, c);
   if (cell.shape & SHAPE_ALT) diverging = !diverging;
   tft.fillCircle(sx, sy, 4, MAP_RING);
   tft.fillCircle(dx, dy, 4, MAP_RING);
@@ -337,28 +350,69 @@ static void mapDrawDots(Adafruit_GFX &tft, uint8_t r, uint8_t c) {
   tft.fillCircle(dx, dy, 3, diverging ? MAP_ON  : MAP_OFF);
 }
 
-static void mapDrawLabel(Adafruit_GFX &tft, int16_t x, int16_t y, const MapCell &cell) {
-  const int16_t M = MAP_CELL / 2;
-  uint8_t base = cell.shape & 3, mask = (cell.shape >> 2) & 0x0F;
-  int16_t w = (cell.acc >= 10) ? 11 : 5, lx, ly;     // 5x7 font, size 1
-  if ((cell.shape & SHAPE_SIG) && !base) {           // signal on a diagonal: opposite corner
-    ly = (mask & E_B) ? y + 2 : y + MAP_CELL - 9;
-    lx = (mask & E_R) ? x + 2 : x + MAP_CELL - 2 - w;
-  } else if ((cell.shape & SHAPE_SIG) && base == BASE_H) {
-    lx = x + M - w / 2;  ly = y + MAP_CELL - 9;      // below the line
-  } else if (cell.shape & SHAPE_SIG) {
-    lx = x + 2;          ly = y + 2;                 // top-left, clear of the dot
-  } else if (base == BASE_H) {                              // put it in the empty half
-    lx = x + M - w / 2;
-    ly = (mask & E_T) ? y + MAP_CELL - 9 : y + 2;
-  } else {
-    ly = y + M - 3;
-    lx = (mask & E_R) ? x + 2 : x + MAP_CELL - 2 - w;
+// small 3 x 5 digits for numbers too wide for the normal 5 x 7 font
+// (15 bits per digit, top row first, 3 bits per row)
+const uint16_t MAP_TINY_DIGITS[10] PROGMEM = {
+  0b111101101101111,  // 0
+  0b010110010010111,  // 1
+  0b111001111100111,  // 2
+  0b111001111001111,  // 3
+  0b101101111001001,  // 4
+  0b111100111001111,  // 5
+  0b111100111101111,  // 6
+  0b111001001001001,  // 7
+  0b111101111101111,  // 8
+  0b111101111001111   // 9
+};
+
+static void mapTinyText(Adafruit_GFX &tft, int16_t x, int16_t y, const char *s, uint8_t n) {
+  for (uint8_t i = 0; i < n; i++, x += 4) {
+    uint16_t g = pgm_read_word(&MAP_TINY_DIGITS[s[i] - '0']);
+    for (uint8_t b = 0; b < 15; b++)
+      if (g & (0x4000 >> b)) tft.drawPixel(x + b % 3, y + b / 3, MAP_LABEL);
   }
-  tft.setTextSize(1);
-  tft.setTextColor(MAP_LABEL);
-  tft.setCursor(lx, ly);
-  tft.print(cell.acc);
+}
+
+// accessory number centred in the box (bx, by, bw, bh): normal font if it fits,
+// otherwise the small font on one line, otherwise the small font on two lines
+static void mapDrawNumber(Adafruit_GFX &tft, int16_t bx, int16_t by, int16_t bw, int16_t bh, uint16_t acc) {
+  char s[6];
+  utoa(acc, s, 10);
+  uint8_t n = strlen(s);
+
+  int16_t w = 6 * n - 1;                            // 5 x 7 font, size 1
+  if (w <= bw) {
+    tft.setTextSize(1);
+    tft.setTextColor(MAP_LABEL);
+    tft.setCursor(bx + (bw - w) / 2, by + (bh - 7) / 2);
+    tft.print(s);
+    return;
+  }
+  w = 4 * n - 1;
+  if (w <= bw) {
+    mapTinyText(tft, bx + (bw - w) / 2, by + (bh - 5) / 2, s, n);
+    return;
+  }
+  uint8_t n1 = (n + 1) / 2, n2 = n - n1;            // e.g. 2040 -> 20 / 40
+  int16_t w1 = 4 * n1 - 1, w2 = 4 * n2 - 1, top = by + (bh - 11) / 2;
+  mapTinyText(tft, bx + (bw - w1) / 2, top,     s,      n1);
+  mapTinyText(tft, bx + (bw - w2) / 2, top + 6, s + n1, n2);
+}
+
+// the label goes in the clear part of the square, away from the track and dots
+static void mapDrawLabel(Adafruit_GFX &tft, int16_t x, int16_t y, const MapCell &cell) {
+  uint8_t base = cell.shape & 3, mask = (cell.shape >> 2) & 0x0F;
+  if ((cell.shape & SHAPE_SIG) && !base) {          // signal on a diagonal: opposite corner
+    mapDrawNumber(tft, (mask & E_R) ? x + 1 : x + 18, (mask & E_B) ? y + 1 : y + 18, 13, 13, cell.acc);
+  } else if ((cell.shape & SHAPE_SIG) && base == BASE_H) {
+    mapDrawNumber(tft, x + 1, y + 21, 30, 10, cell.acc);              // below the line
+  } else if (cell.shape & SHAPE_SIG) {
+    mapDrawNumber(tft, x + 1, y + 1, 11, 11, cell.acc);               // top-left, clear of the dot
+  } else if (base == BASE_H) {                      // point: the half without the diagonal
+    mapDrawNumber(tft, x + 1, (mask & E_T) ? y + 20 : y + 1, 30, 11, cell.acc);
+  } else {
+    mapDrawNumber(tft, (mask & E_R) ? x + 1 : x + 21, y + 1, 11, 30, cell.acc);
+  }
 }
 
 static void mapDrawCell(Adafruit_GFX &tft, uint8_t r, uint8_t c) {
@@ -392,10 +446,25 @@ void dccMapDraw(Adafruit_GFX &tft) {
   showMapStatus();                  // track mode / power line in the top strip
 }
 
-// ---------------- Accessory hook ----------------
+// ---------------- Point / signal changes ----------------
+// Record the new state of accessory 'acc' (1-2040) on every map square that uses it,
+// and redraw those dots if the map is showing. 93 is treated as an ordinary number here.
+void dccMapSetPoint(Adafruit_GFX &tft, uint16_t acc, bool on) {
+  if (!dccMapLoaded || acc < MAP_FIRST_ACC || acc > MAP_LAST_ACC) return;
+  bool draw = dccMapShown;
+  if (draw) tft.setRotation(MAP_ROT);
+  for (uint8_t r = 0; r < MAP_ROWS; r++)
+    for (uint8_t c = 0; c < MAP_COLS; c++)
+      if (dccMap[r][c].acc == acc) {
+        mapSetCellOn(r, c, on);
+        if (draw) mapDrawDots(tft, r, c);
+      }
+  if (draw) tft.setRotation(MAP_BASE_ROT);
+}
+
 // Call for every Zero 1 accessory command. Returns true if it was the map
 // screen accessory (93), so the caller has nothing else to do with it.
-bool dccMapAccessory(Adafruit_GFX &tft, uint8_t acc, bool on) {
+bool dccMapAccessory(Adafruit_GFX &tft, uint16_t acc, bool on) {
   if (acc == MAP_SCREEN_ACC) {
     if (on) {
       if (!dccMapLoaded) {          // no valid map file at start-up: stay on the loco screen
@@ -412,15 +481,6 @@ bool dccMapAccessory(Adafruit_GFX &tft, uint8_t acc, bool on) {
     return true;
   }
 
-  if (acc < MAP_FIRST_ACC || acc > MAP_LAST_ACC) return false;
-  mapSetAccState(acc, on);
-  if (!dccMapShown || !dccMapLoaded) return false;
-
-  // redraw only the dots of points using this accessory
-  tft.setRotation(MAP_ROT);
-  for (uint8_t r = 0; r < MAP_ROWS; r++)
-    for (uint8_t c = 0; c < MAP_COLS; c++)
-      if (dccMap[r][c].acc == acc) mapDrawDots(tft, r, c);
-  tft.setRotation(MAP_BASE_ROT);
+  dccMapSetPoint(tft, acc, on);
   return false;
 }
