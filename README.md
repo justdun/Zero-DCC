@@ -56,3 +56,6 @@ Release Candidate 2.0
 
 Release Candidate 2.1
   - WiFi status added. Where a Combination Arduino Mega / ESP8266 WiFi board is being used for the ZeroDCC host, connection status will be displayed, see [WiFi Bridge](https://github.com/justdun/Zero-DCC/tree/main/WiFi%20Bridge).
+
+Release Candidate 2.2
+  - Accessory 92 added to allow use of DCC points numbered from 90-2040
