@@ -59,3 +59,6 @@ Release Candidate 2.1
 
 Release Candidate 2.2
   - Accessory 92 added to allow use of DCC points numbered from 90-2040
+
+Release Candidate 2.2.1
+  - Minor bug fix to how playback speed is handled on screen
