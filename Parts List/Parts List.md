@@ -28,11 +28,33 @@ Here is the parts list for my build.  I have included some more expensive source
 
 5.    DCC-EX system
 
-	  I used an Arduino Mega with WiFi and a genuine Arduino MotorSheild (see DCC-EX pages for details https://dcc-ex.com/) 
+	  I used an Arduino Mega with WiFi and a genuine Arduino MotorShield (see DCC-EX pages for details https://dcc-ex.com/) 
 
       (eg: https://www.jaycar.com.au/duinotech-mega-2560-r3-main-board-with-wi-fi/p/XC4421 ; and
            https://www.jaycar.com.au/arduino-motor-shield-rev3/p/XC9207)
 
+      A few notes about installing the DCC-EX software.  The new DCC-EX installer works very well - just follow the instructions.  I've tested against Command Station v5.6.0.
+	 
+      In the configuration page, you have a number of options.  
+	 
+      Only select "I have a display" if you're going to have a screen on your DCC-EX board. This does NOT related to the screen that attaches to the ZeroDCC board. Feel free to have two, I just don't use it that way.
+
+      Do not disable (ie keep) programming support.  If you ever want to use ZeroDCC to program locomotive or accessory modules, you'll need this enabled.
+
+      I highly recommend selecting (ie turn on) "Advanced config" - that will allow you to configure your serial ports which is the best way to connect ZeroDCC to DCC-EX.
+
+      Turn on WiFi support with "I have WiFi" if you have a WiFi module for your DCC-EX and you wish to connect with your phone, or use it to connect ZeroDCC to DCC-EX wirelessly.
+
+      Don't forget to select your motor drive board from the drop down list, or you won't be able to continue with the installer!
+
+      <B>Advanced Configuration</B>
+
+      In this screen, I recommend leaving everything intact, and add a single new line at the bottom with the following text:
+
+          #define SERIAL1_COMMANDS
+
+
+      That will enable your serial 1 port on DCC-EX so it can connect to your ZeroDCC board directly with a single wire.
 
 6. 	DCC-EX power supply (12-24V DC 5Amp)
 
