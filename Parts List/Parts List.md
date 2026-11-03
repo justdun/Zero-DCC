@@ -15,18 +15,47 @@ Here is the parts list for my build.  I have included some more expensive source
 
 	 This is to display the current ZeroDCC configuration.
 
+     If you are using the same model as I am, you will need to configure your Arduino IDE settings, or more precisely the MCUFRIEND_kbv (screen) library settings:
 
-3.   DCC Sniffer (eg: https://forum.mrhmag.com/post/sma37-simple-dcc-connections-for-wide-decoder-adaptation-12217074)
+	 Locate Arduino/libraries/MCUFRIEND_kbv/utility/mcufriend_shield.h	(on OSX it will be in your user directory's Document folder/directory).  Open it in a text editor.
+
+	 Look for the line toward/at the top:
+
+  
+     `//#define USE_SPECIAL`
+
+	 and change it to (removing the two `//` will make this code rather than a comment):
+
+	 `#define USE_SPECIAL`
+
+	 Save the file back once it is been edited (you may want to put a comment before or after it to mark that you changed it!)
+
+	 then in the same folder/directory, locate the file mcufriend_special.h  and open it in a text editor.
+
+	 Look for the line:
+
+	 `//#define USE_MEGA_8BIT_PORTC_SHIELD // 4.7sec Mega2560 Shield`
+
+	 and change it to (remove the comment marks):
+	 
+	 `#define USE_MEGA_8BIT_PORTC_SHIELD // 4.7sec Mega2560 Shield`
+
+	 Also, make sure that this line is the only line starting with "#define" in the top section of the document. Make sure all other #define statements commence with comment marks: `//`
+
+	 Once this is done, save the file. When you compile the code for this hardware it should now work as expected.
+
+	 
+4.   DCC Sniffer (eg: https://forum.mrhmag.com/post/sma37-simple-dcc-connections-for-wide-decoder-adaptation-12217074)
 
 	 I used Geoff Bunza’s PCB. Interestingly, this simple DCC sniffer can also sniff the Zero 1 signal.
 
 
-4.   Relay module, 2 channel relay 5V (eg: https://www.aliexpress.com/item/1005002617199944.html)
+5.   Relay module, 2 channel relay 5V (eg: https://www.aliexpress.com/item/1005002617199944.html)
 
 	 If you are still using a MicroMimic and/or Zero 1 accessory modules (which you certainly can), these relays are used to disconnect the Zero 1 feed to those circuits when Zero 1 Functions 90-99 are being accessed by the ZeroDCC code.  Without this, your genuine Zero 1 accessories and MicroMimic will falsely change in response to ZeroDCC relayed keyboard strokes.
 
 
-5.    DCC-EX system
+6.    DCC-EX system
 
 	  I used an Arduino Mega with WiFi and a genuine Arduino MotorShield (see DCC-EX pages for details https://dcc-ex.com/) 
 
@@ -56,11 +85,11 @@ Here is the parts list for my build.  I have included some more expensive source
 
       That will enable your serial 1 port on DCC-EX so it can connect to your ZeroDCC board directly with a single wire.
 
-6. 	DCC-EX power supply (12-24V DC 5Amp)
+7. 	DCC-EX power supply (12-24V DC 5Amp)
 
   	 This is to provide power to your DCC system. The motor shield on the DCC-EX system will regulate the voltage for the track.  I used an old electronics power supply.  Using an optional buck converter (below) you can also use this supply to power the Arduino's.
 
-7.    Cables and connectors
+8.    Cables and connectors
 
       In the main, I used Dupont single wire connectors.
       The biggest problem was making a cable to separate the TFT shield from the Mega and hang it over the Zero 1 locomotive list. I couldn't find any existing cables for this, so I made a custom ribbon cable.
