@@ -92,9 +92,7 @@ Here is the parts list for my build.  I have included some more expensive source
 8.    Cables and connectors
 
       In the main, I used Dupont single wire connectors.
-      The biggest problem was making a cable to separate the TFT shield from the Mega and hang it over the Zero 1 locomotive list. I couldn't find any existing cables for this, so I made a custom ribbon cable.
-
-  
+      The biggest problem was making a cable to separate the TFT shield from the Mega and hang it over the Zero 1 locomotive list. I couldn't find any existing cables for this, so I made a custom ribbon cable. But you can adapt an older style (40pin) IDE cable. Just check it doesn't have the pin block, and that it doesn't earth any of the pins (newer fast 40 pin IDE cables do I believe). There's also this: https://www.aliexpress.com/item/32391134102.html - again you would need to adapt a little.  
 
 
 <h2>Optional:</h2>
