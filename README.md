@@ -80,7 +80,7 @@ Release Candidate 4.0
   - Implemented Zero DCC WiFi access point  (ZeroDCC_xxxxx, Password_xxxxx_)
   - Can connect to DCC-EX compatible mobile app or JMRI via WiFi (192.168.6.1:2560)
   - Control any DCC connected locomotive or accessory/point via Zero DCC WiFi
-  - Control of any Zero 1 locomotive (ie CAB ID 1-16) via Zero DCC WiFi  (also requires separate external Zero DCC Rail Drive module)
+  - Control of any Zero 1 locomotive (ie CAB ID 1-16) or accessory/point via Zero DCC WiFi  (also requires separate external Zero DCC Rail Drive module)
   - Connection to DCC-EX via mega Serial 1 or WiFi (selectable in code)
   - Connection to Zero DCC Rail Drive via mega Serial 2 (selectable in code)  (also requires separate external Zero DCC Rail Drive module)
   - DCC CAB 9990-9999 can be used to control Zero DCC session recording and playback from mobile app or JMRI
