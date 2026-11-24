@@ -77,7 +77,7 @@ Release Candidate 4.0
   - Allows for Light Pen changes to be operational in either Zero 1 or DCC (also requires separate external Zero DCC Rail Drive module)
   - Allows for MicroMimic Route Module commands to be operational in either Zero 1 or DCC (also requires separate external Zero DCC Rail Drive module)
   - Allows for Accessory 95 recordings to be played back in either Zero 1 or DCC  (also requires separate external Zero DCC Rail Drive module)
-  - Implemented Zero DCC WiFi access point  (ZeroDCC_xxxxx, Password_xxxxx_
+  - Implemented Zero DCC WiFi access point  (ZeroDCC_xxxxx, Password_xxxxx_)
   - Can connect to DCC-EX compatible mobile app or JMRI via WiFi (192.168.6.1:2560)
   - Control any DCC connected locomotive or accessory/point via Zero DCC WiFi
   - Control of any Zero 1 locomotive (ie CAB ID 1-16) via Zero DCC WiFi  (also requires separate external Zero DCC Rail Drive module)
