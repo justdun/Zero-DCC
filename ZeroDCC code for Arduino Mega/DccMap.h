@@ -54,6 +54,11 @@
 //   Default:      accessory OFF -> green, ON -> red
 //   Alternative:  the other way round.
 //   Accessories are assumed OFF until they are first set after power-up.
+// TOUCH (see ZeroTouch.h)
+//   Point:  tap nearer the straight dot = straight route, nearer the diverging dot = diverging.
+//   Signal: tap right of / below the dot = red, left of / above it = green
+//           (horizontal track: left / right; vertical: above / below; diagonal: either).
+//   Every tap is sent (and recorded during Acc 95), even if the point is already set that way.
 // ---------------------------------------------------------------------------
 //
 // IN YOUR SKETCH
@@ -69,6 +74,8 @@
 //          dccMapSetPoint(tft, acc, on);                // never treats 93 as the map screen
 //   5. Skip loco screen updates while the map is showing:
 //          if (!dccMapActive()) { ...draw speed / direction... }
+//   6. Touch (optional): dccMapTap(x, y, acc, state) gives the point / signal under a tap and
+//      the state the tap asks for (nearest dot on a point, side of the dot on a signal).
 
 #pragma once
 #include <Adafruit_GFX.h>
@@ -319,18 +326,26 @@ static void mapDotPositions(int16_t x, int16_t y, uint8_t shape,
   dy = ay + (by - ay) * 3 / 4;
 }
 
-// single signal dot in the middle of the track
-static void mapDrawSignal(Adafruit_GFX &tft, uint8_t r, uint8_t c) {
+// position of a signal's dot: middle of the square, or halfway along its diagonal
+static void mapSignalPos(uint8_t r, uint8_t c, int16_t &px, int16_t &py) {
   const MapCell &cell = dccMap[r][c];
   const int16_t M = MAP_CELL / 2;
-  int16_t x = c * MAP_CELL, y = MAP_TOP + r * MAP_CELL, px = x + M, py = y + M;
+  int16_t x = c * MAP_CELL, y = MAP_TOP + r * MAP_CELL;
+  px = x + M; py = y + M;
   uint8_t mask = (cell.shape >> 2) & 0x0F;
-  if (mask) {                                       // diagonal: halfway along it
+  if (mask) {
     int16_t ax, ay, bx, by;
     mapEdgePoint(x, y, mask & (E_L | E_R), ax, ay);
     mapEdgePoint(x, y, mask & (E_T | E_B), bx, by);
     px = (ax + bx) / 2; py = (ay + by) / 2;
   }
+}
+
+// single signal dot in the middle of the track
+static void mapDrawSignal(Adafruit_GFX &tft, uint8_t r, uint8_t c) {
+  const MapCell &cell = dccMap[r][c];
+  int16_t px, py;
+  mapSignalPos(r, c, px, py);
   bool red = mapCellOn(r, c);
   if (cell.shape & SHAPE_ALT) red = !red;
   tft.fillCircle(px, py, 4, MAP_RING);
@@ -460,6 +475,72 @@ void dccMapSetPoint(Adafruit_GFX &tft, uint16_t acc, bool on) {
         if (draw) mapDrawDots(tft, r, c);
       }
   if (draw) tft.setRotation(MAP_BASE_ROT);
+}
+
+// ---------------- Touch ----------------
+// Which map square has the point / signal for a tap at landscape position (x, y)?
+// A tap on a square without a point or signal (plain track, blank, a near miss) uses the
+// nearest point / signal in the squares around it, if its centre is within 3/4 of a square
+// of the tap. Returns false if there's nothing close enough, or no map is loaded.
+static bool mapHitCell(int16_t x, int16_t y, int8_t &br, int8_t &bc) {
+  if (!dccMapLoaded || y < MAP_TOP || x < 0) return false;
+  int16_t c = x / MAP_CELL, r = (y - MAP_TOP) / MAP_CELL;
+  if (r >= MAP_ROWS || c >= MAP_COLS) return false;
+
+  br = -1; bc = -1;
+  if (dccMap[r][c].acc) {
+    br = r; bc = c;
+  } else {
+    const long reach = (long)(MAP_CELL * 3 / 4) * (MAP_CELL * 3 / 4);
+    long best = reach + 1;
+    for (int8_t dr = -1; dr <= 1; dr++) {
+      for (int8_t dc = -1; dc <= 1; dc++) {
+        int16_t rr = r + dr, cc = c + dc;
+        if (rr < 0 || rr >= MAP_ROWS || cc < 0 || cc >= MAP_COLS) continue;
+        if (!dccMap[rr][cc].acc) continue;
+        long dx = x - (cc * MAP_CELL + MAP_CELL / 2);
+        long dy = y - (MAP_TOP + rr * MAP_CELL + MAP_CELL / 2);
+        long d = dx * dx + dy * dy;
+        if (d < best) { best = d; br = rr; bc = cc; }
+      }
+    }
+    if (br < 0) return false;
+  }
+  return true;
+}
+
+// The accessory number and the state to send for a tap at landscape position (x, y).
+//   Point:  the route whose dot is nearer the tap - straight dot = straight route,
+//           diverging dot = diverging route (the A option is taken into account).
+//   Signal: tap on the right of the dot (horizontal track), below it (vertical track), or
+//           below / right of it (diagonal track) = RED; left / above = GREEN.
+// The state is what the tap asks for, whether or not it's already set that way.
+bool dccMapTap(int16_t x, int16_t y, uint16_t &acc, uint8_t &state) {
+  int8_t r, c;
+  if (!mapHitCell(x, y, r, c)) return false;
+  const MapCell &cell = dccMap[r][c];
+  bool alt = cell.shape & SHAPE_ALT;
+  acc = cell.acc;
+
+  if (cell.shape & SHAPE_SIG) {
+    int16_t px, py;
+    mapSignalPos(r, c, px, py);
+    uint8_t base = cell.shape & 3;
+    bool red;
+    if (base == BASE_H)      red = x > px;
+    else if (base == BASE_V) red = y > py;
+    else                     red = (x - px) + (y - py) > 0;
+    state = (red != alt) ? 1 : 0;              // default: ON = red
+    return true;
+  }
+
+  int16_t sx, sy, dx, dy;
+  mapDotPositions(c * MAP_CELL, MAP_TOP + r * MAP_CELL, cell.shape, sx, sy, dx, dy);
+  long ds = (long)(x - sx) * (x - sx) + (long)(y - sy) * (y - sy);
+  long dd = (long)(x - dx) * (x - dx) + (long)(y - dy) * (y - dy);
+  bool diverging = dd < ds;
+  state = (diverging != alt) ? 1 : 0;         // default: ON = diverging
+  return true;
 }
 
 // Call for every Zero 1 accessory command. Returns true if it was the map
