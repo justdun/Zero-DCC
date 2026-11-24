@@ -62,3 +62,26 @@ Release Candidate 2.2
 
 Release Candidate 2.2.1
   - Minor bug fix to how playback speed is handled on screen
+
+Unreleased 3.x
+  - Touch screen implementation
+  - Touch controls added to Locomotive screen (direction, speed, lights, horn/whistle)
+  - Touch controls added to Layout Screen (switch points/signals)
+  - Touch screen menu system implemented (for quick access to Accessory functions 90-99)
+  - Additional DCC CV programming available via touch screen menu system Accessory 91 (eg Hornby DCC Accessory modules)
+  - Confirmed working on parallel and SPI screens
+  - Option in main code to select SPI screen (not recommended as very slow to update)
+
+Release Candidate 4.0
+  - Implemented Zero 1 Rail Drive input and signal generation for separate external Zero DCC Rail Drive module
+  - Allows for Light Pen changes to be operational in either Zero 1 or DCC (also requires separate external Zero DCC Rail Drive module)
+  - Allows for MicroMimic Route Module commands to be operational in either Zero 1 or DCC (also requires separate external Zero DCC Rail Drive module)
+  - Allows for Accessory 95 recordings to be played back in either Zero 1 or DCC  (also requires separate external Zero DCC Rail Drive module)
+  - Implemented Zero DCC WiFi access point  (ZeroDCC_xxxxx, Password_xxxxx_
+  - Can connect to DCC-EX compatible mobile app or JMRI via WiFi (192.168.6.1:2560)
+  - Control any DCC connected locomotive or accessory/point via Zero DCC WiFi
+  - Control of any Zero 1 locomotive (ie CAB ID 1-16) via Zero DCC WiFi  (also requires separate external Zero DCC Rail Drive module)
+  - Connection to DCC-EX via mega Serial 1 or WiFi (selectable in code)
+  - Connection to Zero DCC Rail Drive via mega Serial 2 (selectable in code)  (also requires separate external Zero DCC Rail Drive module)
+  - DCC CAB 9990-9999 can be used to control Zero DCC session recording and playback from mobile app or JMRI
+  - Use of on-board EEPROM to store last used roster configuration (SD card still required for multiple rosters)
