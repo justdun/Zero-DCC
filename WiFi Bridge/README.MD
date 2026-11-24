@@ -22,6 +22,10 @@ There’s often also a small slide switch that picks which Mega serial port conn
 
 ## Edit the settings at the top of the bridge sketch.
 
+The WiFi bridge (if enabled in the Zero DCC .ino) will attempt to locate a DCC-EX access point and login using the DCC-EX default username/password combination.
+
+If you have changed this, or are connecting to your own local WiFi network, you will need to edit the top of this file.
+
 If DCC-EX runs its own WiFi access point: the network name looks like DCCEX_ followed by six characters, and the password is PASS_ followed by the same six characters. DCC-EX prints both on its serial monitor at startup. Its address is normally 192.168.4.1, which is already filled in.
 
 If DCC-EX joins your home network: use your home WiFi details instead, and give the command station a fixed IP address in your router.
@@ -76,3 +80,8 @@ Dot Legend:
 | No dot | Nothing Received from WiFi module |        
 
 When you are adjusting the Zero 1 controls, you will see the dot blinking Green as each command is sent.
+
+
+## This bridge now also advertises itself as a "ZeroDCC_xxxxxx" WiFi access point for you to connect to with as password of "Password_xxxxxxx" matching the access point name.
+
+This will allow you to connect a DCC-EX compatible mobile application, or JMRI using IP number 192.168.6.1:2560
