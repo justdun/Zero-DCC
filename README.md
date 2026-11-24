@@ -24,6 +24,8 @@ This project includes:
 
 For video demonstrations please visit:  https://www.youtube.com/@zero1guy
 
+I've also made an assistant to help decide which modules you might want: https://zero1guy.infinityfree.me
+
 Special thanks to the team developing the DCC-EX platform without which this project would not be possible.
 
 Thanks also to Geoff Bunza for his excellent, simple DCC sniffer circuit and PCB design.
